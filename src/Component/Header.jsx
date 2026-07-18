@@ -1,44 +1,52 @@
-import React, { useState } from "react";
-import userIcon from "../assets/userIcon.jpg";
+import React, { useEffect } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+
+import { LOGO } from "../utils/constants";
 import { auth } from "../utils/firebase";
-import { useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
+
 const Header = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector(store => store.user);
+  const user = useSelector((store) => store.user);
 
   const handleSignOut = () => {
-     console.log("Sign out clicked");
-    signOut(auth)
-      .then(() => {
-            console.log("Sign out successful");
-        navigate("/");
-      })
-      .catch((error) => {
-         console.error("Sign out error:", error);
-        navigate("/error");
-      });
+    signOut(auth).catch((error) => {
+      console.error("Sign out error:", error);
+      navigate("/error");
+    });
   };
-console.log("Header rendering, user:", user);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(addUser({ uid, email, displayName, photoURL }));
+      } else {
+        dispatch(removeUser());
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="absolute w-screen px-8 py-2 bg-linear-to-b from-black z-10 flex items-center justify-between">
-      <img
-        className="w-48"
-        src="https://occ.a.nflxso.net/dnmt/api/v6/iL4oJVDYZ8KLSrJ6eG2OwtghbfQ/AAAAAeuLioOK1ZSC8bQbffYbz1gZFxugAQdkx7UsMvqKDtFJLk3EWkpY-w8IBimYy_0xmg1aTzugh7JDHsGzv6hqIL9_qklFo-PFSH81MwCe9rokU4kGkdki.svg"
-        alt="logo"
-      />
-    {user &&<div>
-      <img
-        className="w-20 h-20 rounded-full object-cover cursor-pointer hover:opacity-80 transition"
-        src={user?.photoURL}
-        alt="usericon"
-        onClick={handleSignOut}
-      />
+      <img className="w-48" src={LOGO} alt="logo" />
+      {user && (
+        <div>
+          <img
+            className="w-20 h-20 rounded-full object-cover cursor-pointer hover:opacity-80 transition"
+            src={user?.photoURL}
+            alt="usericon"
+            onClick={handleSignOut}
+          />
+        </div>
+      )}
     </div>
-}
-    </div>
-    );
+  );
 };
 
 export default Header;
