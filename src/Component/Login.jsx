@@ -65,7 +65,9 @@ const Login = () => {
         email.current.value,
         password.current.value,
       )
-        .then(() => {
+        .then((userCredential) => {
+          const { uid, email, displayName, photoURL } = userCredential.user;
+          dispatch(addUser({ uid, email, displayName, photoURL }));
           navigate("/browse");
         })
         .catch((error) => {
