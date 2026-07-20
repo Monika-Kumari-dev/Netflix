@@ -1,6 +1,8 @@
 import React from "react";
 import Header from "./Header";
 import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
+import MainContainer from "./MainContainer";
+import SecondaryConatiner from "./SecondaryConatiner";
 
 const Browse = () => {
   const { movies, isLoading } = useNowPlayingMovies();
@@ -8,6 +10,8 @@ const Browse = () => {
   return (
     <div>
       <Header />
+      <MainContainer/>
+      <SecondaryConatiner/>
       <div className="pt-24 px-8">
         {isLoading ? (
           <p className="text-white">Loading movies...</p>
@@ -20,7 +24,7 @@ const Browse = () => {
                   "https://placehold.co/300x450?text=No+Image"
                 }
                 alt={movie.titleText?.text}
-                className="w-full rounded"
+                className="w-full rounded" 
               />
               <p className="text-white text-sm mt-1">{movie.titleText?.text}</p>
             </div>

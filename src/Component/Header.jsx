@@ -35,7 +35,7 @@ const Header = () => {
   return (
     <div className="absolute w-screen px-8 py-2 bg-linear-to-b from-black z-10 flex items-center justify-between">
       <img className="w-48" src={LOGO} alt="logo" />
-      {user && (
+      {/* {user && (
         <div>
           <img
             className="w-20 h-20 rounded-full object-cover cursor-pointer hover:opacity-80 transition"
@@ -44,7 +44,7 @@ const Header = () => {
             onClick={handleSignOut}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

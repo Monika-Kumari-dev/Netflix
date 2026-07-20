@@ -5,3 +5,4 @@ export const USER_AVATAR =
 Avatar
 export const RAPIDAPI_KEY = import.meta.env.VITE_RAPIDAPI_KEY;
 export const RAPIDAPI_HOST = "moviesdatabase.p.rapidapi.com";
+export const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
