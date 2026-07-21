@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { YOUTUBE_API_KEY } from "../utils/constants";
 
+const trailerCache = {};
+
 const VideoBackground = ({ movie, isPlaying }) => {
   const iframeRef = useRef(null);
 
@@ -9,7 +11,14 @@ const VideoBackground = ({ movie, isPlaying }) => {
 
   useEffect(() => {
     const title = movie?.titleText?.text;
-    if (!title) return;
+    const movieId = movie?.id;
+    if (!title || !movieId) return;
+
+    if (trailerCache[movieId] !== undefined) {
+      setTrailerId(trailerCache[movieId]);
+      setLoading(false);
+      return;
+    }
 
     const fetchTrailer = async () => {
       setLoading(true);
@@ -23,6 +32,7 @@ const VideoBackground = ({ movie, isPlaying }) => {
         console.log('API Response:', data);
 
         const id = data?.items?.[0]?.id?.videoId || null;
+        trailerCache[movieId] = id;
         setTrailerId(id);
       } catch (error) {
         console.error('Trailer fetch failed:', error);

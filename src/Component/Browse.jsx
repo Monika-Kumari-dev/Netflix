@@ -1,36 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "./Header";
 import useNowPlayingMovies from "../hooks/useNowPlayingMovies";
 import MainContainer from "./MainContainer";
 import SecondaryConatiner from "./SecondaryConatiner";
+import GptSearchBar from "./GptSearchBar";
 
 const Browse = () => {
-  const { movies, isLoading } = useNowPlayingMovies();
+  useNowPlayingMovies();
+  const [showGptSearch, setShowGptSearch] = useState(false);
+  const [gptResults, setGptResults] = useState([]);
 
   return (
-    <div>
+    <div className="bg-black min-h-screen">
       <Header />
-      <MainContainer/>
-      <SecondaryConatiner/>
-      <div className="pt-24 px-8">
-        {isLoading ? (
-          <p className="text-white">Loading movies...</p>
-        ) : (
-          movies.map((movie) => (
-            <div key={movie._id} className="inline-block w-40 m-2">
-              <img
-                src={
-                  movie.primaryImage?.url ||
-                  "https://placehold.co/300x450?text=No+Image"
-                }
-                alt={movie.titleText?.text}
-                className="w-full rounded" 
-              />
-              <p className="text-white text-sm mt-1">{movie.titleText?.text}</p>
-            </div>
-          ))
-        )}
-      </div>
+
+      
+
+      {showGptSearch ? (
+        <div className="pt-24">
+          <GptSearchBar onResults={setGptResults} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 px-8 py-6">
+            {gptResults.map((movie) => (
+              <div key={movie._id} className="aspect-[2/3] rounded-md overflow-hidden">
+                <img
+                  src={movie.primaryImage?.url || "https://placehold.co/300x450?text=No+Image"}
+                  alt={movie.titleText?.text}
+                  className="w-full h-full object-cover"
+                />
+                <p className="text-white text-xs mt-1 truncate">{movie.titleText?.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <>
+          <MainContainer />
+          <SecondaryConatiner />
+        </>
+      )}
     </div>
   );
 };

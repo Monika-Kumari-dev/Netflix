@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import VideoTitle from './VideoTitle'
 import VideoBackground from './VideoBackground'
 import { useSelector } from 'react-redux'
@@ -7,9 +7,25 @@ const MainContainer = () => {
      const movies = useSelector(store => store.movies?.nowPlayingMovies);
      const [isPlaying, setIsPlaying] = useState(true);
      const [showModal, setShowModal] = useState(false);
+     const [currentIndex, setCurrentIndex] = useState(0);
 
-     if(movies === null) return;
-     const mainMovie = movies[0];
+     const featuredMovies = movies
+       ? movies.filter((movie) => movie.primaryImage?.url).slice(0, 6)
+       : [];
+
+     useEffect(() => {
+       if (featuredMovies.length === 0) return;
+
+       const interval = setInterval(() => {
+         setCurrentIndex((prev) => (prev + 1) % featuredMovies.length);
+       }, 15000);
+
+       return () => clearInterval(interval);
+     }, [featuredMovies.length]);
+
+     if (movies === null) return;
+
+     const mainMovie = featuredMovies[currentIndex];
      const title = mainMovie?.titleText?.text;
 
   return (
